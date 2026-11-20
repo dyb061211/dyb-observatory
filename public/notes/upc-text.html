@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#080e1a"><meta name="color-scheme" content="dark light">
+    <title>为什么要把 UPC 存成文本？ · DYB 观测站</title><meta name="description" content="用商品条码说明前导零、字段类型与数据清洗之间的关系。">
+    <meta property="og:type" content="article"><meta property="og:title" content="为什么要把 UPC 存成文本？ · DYB 观测站">
+    <meta property="og:description" content="用商品条码说明前导零、字段类型与数据清洗之间的关系。"><meta property="og:locale" content="zh_CN"><link rel="canonical" href="https://dyb-observatory.happy-myna-7445.chatgpt.site/notes/upc-text.html"><meta property="og:url" content="https://dyb-observatory.happy-myna-7445.chatgpt.site/notes/upc-text.html">
+        <meta property="og:image" content="https://dyb-observatory.happy-myna-7445.chatgpt.site/assets/galaxy.webp"><meta property="og:image:alt" content="DYB 观测站的原创旋涡星系">
+        <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/site.css?v=11611228ef"><script defer src="../assets/site.js?v=d88b1d0a9b"></script>
+</head><body class="subpage">
+
+    <a class="skip" href="#main-content">跳到主要内容</a>
+    <header class="site-head"><div class="container head-inner">
+      <a class="brand" href="/" aria-label="DYB 观测站首页">
+        <svg class="icon brand-mark" aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg><span class="brand-name">DYB</span><span class="brand-divider"></span><span class="brand-caption">观测站</span>
+      </a>
+      <nav class="main-nav" aria-label="主要导航"><a class="nav-sky" href="/">星图</a><a class="nav-works" href="/projects">作品</a><a class="nav-notes" href="/blog" aria-current="location">手记</a><a class="nav-about" href="/profile">关于</a></nav>
+      <a class="github-head" href="https://github.com/dyb061211" aria-label="DYB 的 GitHub 主页"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#github"></use></svg><span>GitHub</span></a>
+    </div></header><main id="main-content"><div class="case-hero"><div class="container case-heading">
+      <a class="back-map" href="/blog"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg>返回博客列表</a>
+      <p class="eyebrow"><span class="short-rule"></span>手记 <span class="middot">/</span> Python · 数据清洗</p>
+      <h1>为什么要把 UPC 存成文本？</h1><p class="case-intro">当单元格里的 00145 被读成数字 145，消失的两个零已经无法从这个值本身找回来。</p>
+    </div></div>
+      <div class="paper"><article class="reading-width note-prose"><h2>先判断字段的用途</h2><p>价格可以相加，条码用来识别商品。由数字组成的标识符依然可以需要前导零。Product Normalizer 读取 Excel 时指定文本类型，再按字段执行清洗。</p>
+        <div class="note-example"><span class="category">项目中的条码处理示例</span><dl class="example-pair"><div><dt>输入文本</dt><dd><code>"00 145.0"</code></dd></div><div><dt>清洗后</dt><dd><code>"00145"</code></dd></div></dl></div>
+        <h2>清洗只能处理还存在的信息</h2><p>读到文本后，程序可以去除空格和末尾多余的全零小数部分。如果来源表格已经把条码存成数值，最初有几个前导零可能已经无从判断。这时应该回看原始资料。</p>
+        <p>在项目页的两表示例里，条码列始终以文本显示。你还可以改动一个 SKU，观察条码完整而商品字段仍然空缺的情况。</p><div class="source-group"><a class="source-link" href="../projects/product-normalizer.html#data-demo"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#table"></use></svg>运行两表示例</a><a class="source-link" href="https://github.com/dyb061211/product-normalizer/blob/main/product_normalizer/cleaner.py"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#github"></use></svg>查看字段清洗规则</a></div>
+      <a class="reading-return" href="/blog"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#book"></use></svg>回到开发手记</a></article></div></main><footer class="foot"><div class="container foot-inner">
+      <a href="/" class="foot-brand"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg><span>DYB 观测站</span></a>
+      <span class="foot-handle">@dyb061211</span>
+      <a class="foot-home" href="/">回到星图</a>
+    </div></footer>
+</body></html>

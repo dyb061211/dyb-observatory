@@ -1,0 +1,62 @@
+{
+  "repositories": [
+    {
+      "id": 1445209185,
+      "name": "java-backend-learning",
+      "description": "java-backend-learning",
+      "language": "Java",
+      "fork": false
+    },
+    {
+      "id": 1430582693,
+      "name": "python-backend-learning",
+      "description": "Python backend learning: asyncio, concurrency, MySQL and Redis.",
+      "language": "Python",
+      "fork": false
+    },
+    {
+      "id": 1421564417,
+      "name": "rea",
+      "description": "Reverse engineer anything with agents, from app behavior down to native binaries.",
+      "language": "",
+      "fork": true
+    },
+    {
+      "id": 1367374025,
+      "name": "shadowrocket-rules",
+      "description": "Shadowrocket / Clash Verge 分流与隐私配置",
+      "language": "JavaScript",
+      "fork": false
+    },
+    {
+      "id": 1358776107,
+      "name": "humanizer-zh",
+      "description": "面向中文项目计划书、报告与专业文本的自然化改写 Codex Skill，保留事实、数据、来源和专业术语。",
+      "language": "",
+      "fork": false
+    },
+    {
+      "id": 1346997599,
+      "name": "product-normalizer",
+      "description": "A Python tool for normalizing product Excel data",
+      "language": "Python",
+      "fork": false
+    },
+    {
+      "id": 1344840291,
+      "name": "walmart-listing-agent",
+      "description": "本地 Walmart Listing 生成与审核工具：货盘事实核对、公开商品页参考、AI 文案与商品图、本机合规检查及 ERP 辅助填入",
+      "language": "",
+      "fork": false
+    },
+    {
+      "id": 1344658313,
+      "name": "gigab2b-local-product-library",
+      "description": "本地大建云仓（GIGAB2B）商品库、库存断点同步与 Seller 公开信息管理工具",
+      "language": "Python",
+      "fork": false
+    }
+  ],
+  "hasNext": false,
+  "syncedAt": 1795172595010
+}
