@@ -33,7 +33,7 @@
 .list-heading{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:17px}
 .list-heading h2,.life-aside h3,.preview-panel h2{font:500 clamp(1.55rem,2.5vw,2.25rem)/1.4 var(--serif);color:var(--warm-white)}
 .index-tabs,.pagination,.editor-nav{display:flex;align-items:center;gap:16px}.index-tabs a{color:var(--quiet);font-size:.92rem;padding:8px 0}.index-tabs [aria-current]{color:var(--accent);border-bottom:1px solid var(--accent)}
-.rows,.contact-list{border-top:1px solid var(--line)}.entry-row,.simple-row,.contact-row{display:block;border-bottom:1px solid var(--line);transition:background .2s,color .2s}
+.rows,.contact-list{border-top:1px solid var(--line)}.entry-row,.simple-row,.contact-item{display:block;border-bottom:1px solid var(--line);transition:background .2s,color .2s}
 .entry-row{padding:clamp(21px,3vw,34px) 0}.entry-row small,.repo-tech{display:flex;align-items:center;gap:9px;color:var(--accent);font-size:.85rem;letter-spacing:.05em}.entry-row small i{font-style:normal;color:var(--quiet)}
 .entry-row h3,.repo-lead h3{font-family:var(--serif);font-size:clamp(1.34rem,2.3vw,2.1rem);font-weight:500;color:var(--warm-white);line-height:1.52;margin:6px 0;overflow-wrap:anywhere}
 .entry-row p,.repo-lead p,.life-aside p,.empty-line{font-size:1rem;line-height:1.9;color:var(--quiet)}.entry-row:hover h3,.simple-row:hover,.contact-row:hover,.repo-lead a:hover{color:var(--accent)}
@@ -42,6 +42,21 @@
 .subheading{margin-top:43px}.simple-row,.contact-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:19px 0}
 .repo-code,.contact-row b{font:400 .97rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--quiet);overflow-wrap:anywhere}
 .contact-row span{display:flex;align-items:center;gap:17px;font-family:Georgia,var(--serif);font-size:clamp(1.25rem,2.4vw,1.9rem)}.contact-row .icon{color:var(--accent);width:25px;height:25px}
+.contact-item{position:relative}
+.contact-row{min-height:72px;margin-inline-end:6rem}
+.contact-row b{min-width:0;text-decoration:underline;text-decoration-color:#ffffff45;text-underline-offset:4px}
+.contact-options>summary{position:absolute;inset-inline-end:0;top:14px;display:grid;place-items:center;list-style:none;min-width:70px;min-height:44px;padding:0 10px;border:1px solid var(--line);border-radius:5px;color:var(--warm-white);font-size:.875rem;cursor:pointer}
+.contact-options>summary::-webkit-details-marker{display:none}
+.contact-options[open]>summary{border-color:var(--accent);color:var(--accent)}
+.contact-panel{max-width:38rem;padding:0 0 16px}
+.contact-value{display:block;width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:#141924;color:var(--warm-white);font:400 1rem/1.5 var(--mono);user-select:text;-webkit-user-select:text}
+.contact-tools{display:flex;align-items:center;flex-wrap:wrap;gap:4px 16px;margin-top:5px}
+.contact-copy,.contact-tools .plain-link{display:inline-flex;align-items:center;min-height:44px;font:500 .94rem/1.5 var(--sans);color:var(--accent)}
+.contact-copy{border:0;background:transparent;padding:0 5px 0 0}
+.contact-status{color:var(--quiet);font-size:.9rem;line-height:1.5}
+.contact-item :is(a,summary,button){touch-action:manipulation;-webkit-tap-highlight-color:rgba(244,184,132,.24)}
+.contact-item :is(a,summary,button):active{background:#ffffff12}
+@media(max-width:540px){.contact-row{display:grid;gap:3px;padding:12px 0}.contact-row span{gap:12px}.contact-row b{padding-inline-start:37px;font-size:.875rem}.contact-tools{gap:4px 18px}}
 .life-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(210px,1fr);gap:7vw}.life-aside{border-left:1px solid var(--line);padding-left:3vw}.life-aside h3{font-size:1.3rem;margin-bottom:12px}
 .life-aside a{display:inline-block;margin-top:8px}.empty-line{padding:25px 0}.pagination{margin-top:22px}
 .station-foot{padding-block:22px;border-top:1px solid var(--line);color:var(--quiet);font-size:.86rem}.station-foot>a{padding:6px 0}

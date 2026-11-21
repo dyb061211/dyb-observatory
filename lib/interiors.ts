@@ -19,7 +19,7 @@ export function shell(s: Station, content: string, options: {compact?:boolean; a
   </header>`;
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <title>${e(options.title||s.title)} · DYB 观测站</title><meta name="theme-color" content="#0b0e16"><meta name="description" content="${s.note}">
-    <link rel="icon" href="/assets/mark.svg"><link rel="stylesheet" href="/assets/site.css?v=11611228ef"><link rel="stylesheet" href="/assets/interiors.css?v=9">
+    <link rel="icon" href="/assets/mark.svg"><link rel="stylesheet" href="/assets/site.css?v=11611228ef"><link rel="stylesheet" href="/assets/interiors.css?v=10">
     <script type="module" src="/assets/interiors.js?v=9"></script></head>
     <body class="interior ${s.slug}${compact?" compact":""}" style="--accent:${s.tint}"><a class="skip" href="#station-content">跳到正文</a>
      <div class="station-bar"><div class="station-bar-inner"><a class="return-map" href="/#${s.anchor}">${icon("observatory")}<span>返回星图</span></a><span class="mast-name">DYB 观测站</span>
@@ -34,8 +34,29 @@ export function projects(repositoryList: string) {
     <div class="featured-repos">${cards}</div>${repositoryList}</div><script type="module" src="/assets/repositories.js?v=9"></script>`;
 }
 export function profile() {
-  return `<div class="station-content contact-content"><div class="list-heading"><h2>找到我</h2></div><div class="contact-list">${profiles.map(([name,handle,url,id])=>
-    `<a href="${url}" class="contact-row"><span>${icon(id)}${name}</span><b>${handle}</b></a>`).join("")}</div></div>`;
+  const rows = profiles.map(([name, handle, url, id]) => {
+    const email = id === "mail";
+    const address = email ? handle : url;
+    const alternate = email ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(address)}` : url;
+    return `<div class="contact-item">
+      <a class="contact-row" href="${e(url)}" target="${email ? "_top" : "_blank"}" rel="noopener noreferrer">
+        <span>${icon(id)}${e(name)}</span><b>${e(handle)}</b>
+      </a>
+      <details class="contact-options">
+        <summary aria-label="查看${e(name)}地址与复制选项">查看地址</summary>
+        <div class="contact-panel">
+          <input class="contact-value" aria-label="${e(name)} ${email ? "邮箱地址" : "主页网址"}" value="${e(address)}" readonly dir="ltr" inputmode="none" spellcheck="false">
+          <div class="contact-tools">
+            <button type="button" class="contact-copy" hidden>${email ? "复制邮箱" : "复制链接"}</button>
+            <a class="plain-link" href="${e(alternate)}" target="_top" rel="noopener noreferrer">${email ? "用 Gmail 网页版写信" : "在当前页打开"}</a>
+          </div>
+          <p class="contact-status" role="status"></p>
+        </div>
+      </details>
+    </div>`;
+  }).join("");
+  return `<div class="station-content contact-content"><div class="list-heading"><h2>找到我</h2></div>
+    <div class="contact-list">${rows}</div></div><script type="module" src="/assets/contacts.js?v=1"></script>`;
 }
 export function reserve() {
   return "";
