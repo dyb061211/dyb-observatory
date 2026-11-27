@@ -1,8 +1,15 @@
 const menu=document.querySelector(".interior-menu");
-document.addEventListener("pointerdown",ev=>{if(!menu.contains(ev.target))menu.open=false;});
-document.addEventListener("keydown",ev=>{
-  if(ev.key==="Escape"&&menu.open){menu.open=false;menu.querySelector("summary").focus();}
-});
+if (menu) {
+  document.addEventListener("pointerdown", ev => {
+    if (!menu.contains(ev.target)) menu.open = false;
+  });
+  document.addEventListener("keydown", ev => {
+    if (ev.key === "Escape" && menu.open) {
+      menu.open = false;
+      menu.querySelector("summary").focus();
+    }
+  });
+}
 try {
   const arrival = Number(sessionStorage.getItem("dyb-arrival"));
   if (Date.now()-arrival<12000) document.body.classList.add("from-passage");

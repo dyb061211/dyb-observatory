@@ -10,6 +10,19 @@ const profiles = [
   ["Gmail",contactEmail,`mailto:${contactEmail}`,"mail"]
 ];
 export function shell(s: Station, content: string, options: {compact?:boolean; actions?:string; title?:string}={}) {
+  if (s.slug === "blog") {
+    return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>${e(options.title || "博客")} · DYB 观测站</title><meta name="theme-color" content="#f8f6f0"><meta name="description" content="${e(s.note)}">
+      <link rel="icon" href="/assets/mark.svg"><link rel="stylesheet" href="/assets/blog.css?v=1">
+      <script type="module" src="/assets/interiors.js?v=10"></script></head>
+      <body class="blog-page"><a class="blog-skip" href="#station-content">跳到正文</a>
+      <header class="blog-masthead">
+        <a class="blog-brand" href="/blog">${icon("observatory")}<span>DYB 观测站</span></a>
+        <nav aria-label="博客导航"><a href="/#star-normalizer">返回星图</a><a href="/profile">关于</a></nav>
+      </header>
+      <main class="blog-main" id="station-content">${content}</main>
+      <footer class="blog-footer"><a href="/blog">博客</a><a href="${git}">GitHub</a></footer></body></html>`;
+  }
   const compact = !!options.compact;
   const stationNav = stations.map(t => `<a href="/${t.slug}"${t.slug===s.slug?' aria-current="page"':''}>${t.title}</a>`).join("");
   const hero = compact ? "" : `<header class="station-hero">
@@ -61,9 +74,14 @@ export function profile() {
 export function reserve() {
   return "";
 }
+export function blogEntry(url: string, title: string, metadata: string, summary = "") {
+  return `<li class="blog-entry"><a href="${e(url)}"><span class="blog-entry-meta">${metadata}</span>
+    <div class="blog-entry-copy"><h3>${e(title)}</h3>${summary ? `<p>${e(summary)}</p>` : ""}</div>
+  </a></li>`;
+}
 export function existingArticles() {
-  return `<a class="entry-row" href="/notes/catalog-order.html"><small>Java · 集合</small><h3>商品目录为什么要保留录入顺序？</h3><p>从一个 SKU 查询和排序的小问题，认识 LinkedHashMap。</p></a>
-    <a class="entry-row" href="/notes/upc-text.html"><small>Python · 数据清洗</small><h3>为什么要把 UPC 存成文本？</h3><p>一个开头的零，足以让两个看似相同的条码产生差别。</p></a>`;
+  return blogEntry("/notes/catalog-order.html", "商品目录为什么要保留录入顺序？", "Java · 集合", "从一个 SKU 查询和排序的小问题，认识 LinkedHashMap。")
+    + blogEntry("/notes/upc-text.html", "为什么要把 UPC 存成文本？", "Python · 数据清洗", "一个开头的零，足以让两个看似相同的条码产生差别。");
 }
 export function currentLife() {
   return `<aside class="life-aside"><h3>目前的状态</h3>

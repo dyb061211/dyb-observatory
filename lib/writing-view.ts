@@ -1,5 +1,5 @@
 import { escapeHTML as e, icon, type Station } from "./stations";
-import { existingArticles, currentLife, shell } from "./interiors";
+import { blogEntry, existingArticles, currentLife, shell } from "./interiors";
 import { pageSize, type Draft, type listEntries } from "./entries";
 
 const formattedDate = new Intl.DateTimeFormat("zh-CN", { timeZone:"America/New_York",year:"numeric",month:"long",day:"numeric" });
@@ -9,16 +9,35 @@ export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEnt
     ? `<div class="station-actions"><a class="primary-link" href="/life?edit=new&amp;topic=近况">写近况</a><a class="plain-link" href="/life?edit=new&amp;topic=经历">记一段经历</a></div>`
     : `<div class="station-actions"><a class="primary-link" href="/blog?edit=new">${icon("book")}写文章</a></div>`):import.meta.env.DEV?
     `<div class="station-actions"><a class="plain-link" href="/signin-with-chatgpt?return_to=/${s.slug}" target="_top">登录测试作者</a></div>`:"";
-  const rows=list.slice(0,pageSize).map(r=>`<a class="entry-row" href="${path}?${drafts?"edit":"read"}=${r.id}">
-    <small>${e(r.topic||label)}<i>·</i><time datetime="${new Date(r.date!).toISOString()}">${formattedDate.format(r.date!)}</time>${drafts&&r.wasPublished?" · 已发表文章的修订":""}</small>
-    <h3>${e(r.title||"无标题草稿")}</h3></a>`).join("");
+  const rows = list.slice(0, pageSize).map(row => {
+    const url = `${path}?${drafts ? "edit" : "read"}=${row.id}`;
+    const title = row.title || "无标题草稿";
+    const topic = e(row.topic || label);
+    const date = `<time datetime="${new Date(row.date!).toISOString()}">${formattedDate.format(row.date!)}</time>`;
+    const revision = drafts && row.wasPublished ? " · 已发表文章的修订" : "";
+    return life
+      ? `<a class="entry-row" href="${url}"><small>${topic}<i>·</i>${date}${revision}</small><h3>${e(title)}</h3></a>`
+      : blogEntry(url, title, `${date}<span>${topic}${revision}</span>`);
+  }).join("");
   const paging=(page>0?`<a href="${listUrl}&amp;page=${page-1}#entries">上一页</a>`:"")+
     (list.length>pageSize?`<a href="${listUrl}&amp;page=${page+1}#entries">下一页</a>`:"");
-  const extra=!drafts&&s.slug==="blog"&&list.length<=pageSize?existingArticles():"";
+  const extra = !life && !drafts && list.length <= pageSize ? existingArticles() : "";
   const empty=rows||extra?"":`<p class="empty-line">${drafts?"草稿箱是空的。":life?"还没有发表生活动态。":"还没有文章。"}</p>`;
   const tabs=author?`<div class="index-tabs"><a href="${path}#entries" ${!drafts?'aria-current="page"':''}>已发表</a><a href="${path}?list=drafts#entries" ${drafts?'aria-current="page"':''}>草稿箱</a></div>`:"";
-  return shell(s,`<div class="station-content${life?" life-grid":""}" id="entries"><div><div class="list-heading"><h2>${drafts?"我的草稿":life?"生活记录":"文章"}</h2>${tabs}</div>
-    <div class="rows">${rows}${extra}${empty}</div>${paging?'<nav class="pagination">'+paging+'</nav>':""}</div>${life?currentLife():""}</div>`,{actions:compose});
+  if (!life) {
+    return shell(s, `<section class="blog-intro" aria-labelledby="blog-title">
+      <h1 id="blog-title">DYB 的博客</h1>
+      <p>${e(s.note)}</p>
+    </section>
+    <section class="blog-archive" id="entries" aria-labelledby="blog-list-title">
+      <div class="blog-list-head"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${compose}</div>
+      ${tabs}
+      ${rows || extra ? `<ul class="blog-list">${rows}${extra}</ul>` : empty}
+      ${paging ? `<nav class="pagination" aria-label="文章分页">${paging}</nav>` : ""}
+    </section>`);
+  }
+  return shell(s,`<div class="station-content life-grid" id="entries"><div><div class="list-heading"><h2>${drafts?"我的草稿":"生活记录"}</h2>${tabs}</div>
+    <div class="rows">${rows}${empty}</div>${paging?'<nav class="pagination">'+paging+'</nav>':""}</div>${currentLife()}</div>`,{actions:compose});
 }
 
 // Escape text before emitting any inline formatting. Only explicit http(s) links become anchors.
@@ -57,6 +76,16 @@ export function articleBody(source: string) {
 }
 export function reader(s: Station, text: {id:string; title:string; body:string; topic:string;date:number}, author: boolean) {
   const action=author?`<a class="plain-link" href="/${s.slug}?edit=${text.id}">编辑${s.slug==="life"?"记录":"文章"}</a>`:"";
+  if (s.slug === "blog") {
+    return shell(s, `<article class="blog-reading">
+      <nav class="editor-nav" aria-label="文章导航"><a href="/blog">全部文章</a>${action}</nav>
+      <header class="blog-article-head">
+        <p class="blog-article-meta"><span>${e(text.topic || s.title)}</span><time datetime="${new Date(text.date).toISOString()}">${formattedDate.format(text.date)}</time></p>
+        <h1>${e(text.title)}</h1>
+      </header>
+      <div class="blog-prose">${articleBody(text.body)}</div>
+    </article>`, { title: text.title });
+  }
   return shell(s,`<article class="manuscript reading"><div class="editor-nav"><a href="/${s.slug}">${s.title}</a>${action}</div>
     <header><p class="orbit-name">${e(text.topic||s.title)} · ${formattedDate.format(text.date)}</p><h1>${e(text.title)}</h1></header>
     <div class="typeset">${articleBody(text.body)}</div></article>`,{compact:true,title:text.title});
@@ -72,7 +101,7 @@ export function editor(s: Station, d: Draft, options: { saved?:boolean; error?:s
   const head=options.preview?"预览"+subject:(d.revision?"编辑":"写")+subject;
   return shell(s,`<div class="manuscript"><div class="editor-nav"><a href="${path}">${s.title}</a><a href="${path}?list=drafts#entries">草稿箱</a></div>
     <form method="post" action="${path}" class="writing-form"><input type="hidden" name="id" value="${e(d.id)}"><input type="hidden" name="revision" value="${d.revision}">
-    <header><p class="orbit-name">${s.body}</p><h1>${head}</h1></header>${notice}
+    <header>${life ? `<p class="orbit-name">${s.body}</p>` : ""}<h1>${head}</h1></header>${notice}
     ${options.preview?`<div class="preview-panel"><h2>${e(d.title||"无标题")}</h2><div class="typeset">${articleBody(d.body)||"<p>还没有正文。</p>"}</div></div>`:""}
     <fieldset${options.preview?" hidden":""}><label for="title">标题</label><input id="title" name="title" maxlength="160" placeholder="${life?"这段日子在做什么":"给文章起个名字"}" value="${e(d.title)}">
        <label for="topic">${life?"记录类型":"分类（选填）"}</label>${topic}
