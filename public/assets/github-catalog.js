@@ -32,8 +32,7 @@ export function repositorySection(snapshot) {
     : "这一页没有其他公开仓库。";
   const pageLink = (n, text) => `<a href="/projects${n === 1 ? "" : `?page=${n}`}#repositories">${text}</a>`;
   const pages = page > 1 || hasNext ? `<nav class="pagination" aria-label="仓库翻页">${page > 1 ? pageLink(page - 1, "← 上一页") : ""}${hasNext ? pageLink(page + 1, "下一页 →") : ""}</nav>` : "";
-  const count = visible.length ? `<span class="section-count">${String(visible.length).padStart(2, "0")}</span>` : "";
   return `<section class="blog-section" id="repositories" aria-labelledby="repositories-title" data-page="${page}" data-stale="${stale}" data-synced-at="${syncedAt}" data-refresh-in="${Math.max(1000, snapshot.nextCheckAt - Date.now())}">
-    <div class="blog-section-head"><div class="blog-section-title"><h2 id="repositories-title">更多仓库</h2>${count}</div><p class="repo-sync" role="status">${status}</p></div>
+    <div class="blog-section-head"><h2 id="repositories-title">更多仓库</h2><p class="repo-sync" role="status">${status}</p></div>
     ${rows ? `<ul class="repo-list">${rows}</ul>` : `<p class="empty-line">${empty}</p>`}${pages}</section>`;
 }

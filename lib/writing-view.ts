@@ -38,25 +38,24 @@ export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEnt
   const paging = (page > 0 ? `<a href="${listUrl}&amp;page=${page - 1}#entries">← ${life ? "较新的记录" : "较新的文章"}</a>` : "") +
     (list.length > pageSize ? `<a href="${listUrl}&amp;page=${page + 1}#entries">${life ? "更早的记录" : "更早的文章"} →</a>` : "");
   const extra = !life && !drafts && list.length <= pageSize ? existingArticles() : "";
-  const total = visible.length + (extra ? 2 : 0);
-  const countBadge = !drafts && page === 0 && total > 0 ? `<span class="section-count">${String(total).padStart(2, "0")}</span>` : "";
   const empty = rows || extra ? "" : `<p class="empty-line">${drafts ? "草稿箱是空的。" : life ? "还没有发表生活动态。" : "还没有文章。"}</p>`;
   const tabs = author ? `<div class="index-tabs"><a href="${base}#entries" ${!drafts ? 'aria-current="page"' : ""}>已发表</a><a href="${base}?list=drafts#entries" ${drafts ? 'aria-current="page"' : ""}>草稿箱</a></div>` : "";
   if (!life) {
+    const isHero = !drafts && page === 0;
     return shell(s, `<h1 class="sr-only">DYB</h1>
-    ${!drafts && page === 0 ? `<section class="blog-intro" aria-label="关于这里">${blogIntro()}</section>` : ""}
+    ${isHero ? `<section class="blog-intro" aria-label="关于这里">${blogIntro()}</section>` : ""}
     <section class="blog-section" id="entries" aria-labelledby="blog-list-title">
-      <div class="blog-section-head"><div class="blog-section-title"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${countBadge}</div>${compose}</div>
+      <div class="blog-section-head"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${compose}</div>
       ${tabs}
       ${rows || extra ? `<ul class="blog-list">${rows}${extra}</ul>` : empty}
       ${paging ? `<nav class="pagination" aria-label="文章分页">${paging}</nav>` : ""}
     </section>
-    ${drafts || page > 0 ? "" : `<section class="blog-section" aria-labelledby="blog-projects-title"><div class="blog-section-head"><div class="blog-section-title"><h2 id="blog-projects-title">项目</h2></div><a class="section-more" href="/projects">全部 →</a></div>
-      ${blogFeaturedProjects()}</section>`}`);
+    ${isHero ? `<section class="blog-section" aria-labelledby="blog-projects-title"><div class="blog-section-head"><h2 id="blog-projects-title">项目</h2><a class="section-more" href="/projects">全部 →</a></div>
+      ${blogFeaturedProjects()}</section>` : ""}`, { hero: isHero });
   }
   return shell(s, `<header class="blog-page-head"><h1>近况</h1><p>软件工程在读，最近在学 Java 后端，也在做 Python 和 AI 小工具。</p></header>
     <section class="blog-section" id="entries" aria-labelledby="life-list-title">
-      <div class="blog-section-head"><div class="blog-section-title"><h2 id="life-list-title">${drafts ? "我的草稿" : "记录"}</h2>${countBadge}</div>${compose}</div>
+      <div class="blog-section-head"><h2 id="life-list-title">${drafts ? "我的草稿" : "记录"}</h2>${compose}</div>
       ${tabs}
       ${rows ? `<ul class="blog-list">${rows}</ul>` : empty}
       ${paging ? `<nav class="pagination" aria-label="记录分页">${paging}</nav>` : ""}

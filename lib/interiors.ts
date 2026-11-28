@@ -28,16 +28,18 @@ function renderHeader(activeSlug?: Station["slug"]) {
 
 const blogFooter = `<footer class="blog-footer"><div class="blog-footer-inner"><span>DYB · 写于日常与代码之间</span><span class="blog-footer-links"><a href="${git}" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#top">回到顶部 ↑</a></span></div></footer>`;
 
-export function shell(s: Station, content: string, options: { title?: string } = {}) {
+export function shell(s: Station, content: string, options: { title?: string; hero?: boolean } = {}) {
   const pageTitle = s.slug === "blog" && !options.title ? "DYB" : `${e(options.title || s.title)} — DYB`;
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
       <title>${pageTitle}</title><meta name="description" content="${e(s.note)}">
-      <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#151413" media="(prefers-color-scheme: dark)">
+      <meta name="theme-color" content="#4e6f95" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0b0f18" media="(prefers-color-scheme: dark)">
       <link rel="icon" href="/assets/mark.svg"><link rel="preload" href="/assets/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-      <link rel="stylesheet" href="/assets/blog.css?v=5"><script src="/assets/color-mode.js?v=2"></script>
+      <link rel="stylesheet" href="/assets/blog.css?v=6"><script src="/assets/color-mode.js?v=3"></script>
+      <script type="module" src="/assets/horizon-sky.js?v=1"></script>
       <script type="module" src="/assets/interiors.js?v=12"></script></head>
-      <body class="blog-page" id="top"><a class="blog-skip" href="#station-content">跳到正文</a>${renderHeader(s.slug)}
-      <main class="blog-main" id="station-content">${content}</main>${blogFooter}</body></html>`;
+      <body class="blog-page" id="top"><a class="blog-skip" href="#station-content">跳到正文</a>
+      <div class="horizon-stage${options.hero ? "" : " compact"}"><canvas class="horizon-canvas" aria-hidden="true"></canvas>${renderHeader(s.slug)}</div>
+      <main class="editorial-sheet" id="station-content">${content}</main>${blogFooter}</body></html>`;
 }
 
 export function projects(repositoryList: string) {
@@ -49,10 +51,10 @@ export function projects(repositoryList: string) {
   </li>`).join("");
   return `<header class="blog-page-head"><h1>项目</h1><p>从一张商品表到一个桌面工具，这里收录写过的小项目与公开仓库。</p></header>
     <section class="blog-section" aria-labelledby="featured-title">
-      <div class="blog-section-head"><div class="blog-section-title"><h2 id="featured-title">精选项目</h2><span class="section-count">${String(featuredProjects.length).padStart(2, "0")}</span></div><a class="section-more" href="${git}?tab=repositories" target="_blank" rel="noopener noreferrer">GitHub 全部仓库 ↗</a></div>
+      <div class="blog-section-head"><h2 id="featured-title">精选项目</h2><a class="section-more" href="${git}?tab=repositories" target="_blank" rel="noopener noreferrer">GitHub 全部仓库 ↗</a></div>
       <ul class="folio-grid">${cards}</ul>
     </section>
-    ${repositoryList}<script type="module" src="/assets/repositories.js?v=11"></script>`;
+    ${repositoryList}<script type="module" src="/assets/repositories.js?v=12"></script>`;
 }
 
 export function profile() {
@@ -80,7 +82,7 @@ export function profile() {
   }).join("");
   return `<header class="blog-page-head"><h1>关于</h1><p>我是 DYB，在读软件工程，平时写一些日常用得上的小工具。主要接触 Java 后端、Python 数据处理和一些 AI 应用，欢迎随时写信聊聊。</p></header>
     <section class="blog-section" aria-labelledby="contact-title">
-      <div class="blog-section-head"><div class="blog-section-title"><h2 id="contact-title">联系方式</h2></div></div>
+      <div class="blog-section-head"><h2 id="contact-title">联系方式</h2></div>
       <div class="contact-list">${rows}</div>
     </section><script type="module" src="/assets/contacts.js?v=2"></script>`;
 }
@@ -96,7 +98,8 @@ export function existingArticles() {
 
 export function blogIntro() {
   const links = profiles.map(([name, , url, id]) => `<a href="${e(url)}"${id === "mail" ? "" : ' target="_blank" rel="noopener noreferrer"'}>${e(id === "mail" ? "写信" : name)}</a>`).join("");
-  return `<p class="blog-lead">我是 DYB，在读软件工程，平时写一些日常用得上的小工具。这里写下做项目时遇见的问题，也留些地方给随笔。</p>
+  return `<div class="lead-accent" aria-hidden="true"></div>
+      <p class="blog-lead">我是 DYB，在读软件工程，平时写一些日常用得上的小工具。这里写下做项目时遇见的问题，也留些地方给随笔。</p>
       <p class="blog-links">${links}</p>`;
 }
 

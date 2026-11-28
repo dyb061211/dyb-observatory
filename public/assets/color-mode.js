@@ -17,7 +17,7 @@
   function apply(mode) {
     root.setAttribute("data-color-mode", mode);
     var metas = document.querySelectorAll('meta[name="theme-color"]');
-    for (var i = 0; i < metas.length; i++) metas[i].setAttribute("content", mode === "dark" ? "#151413" : "#f6f3ec");
+    for (var i = 0; i < metas.length; i++) metas[i].setAttribute("content", mode === "dark" ? "#0b0f18" : "#4e6f95");
     syncButton(mode);
   }
   apply(saved === "dark" || saved === "light" ? saved : media && media.matches ? "dark" : "light");
