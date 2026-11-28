@@ -1,36 +1,68 @@
 <!doctype html>
 <html lang="zh-CN"><head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#080e1a"><meta name="color-scheme" content="dark light">
-    <title>Walmart Listing 智能体 · DYB 观测站</title><meta name="description" content="从原始货盘到人工审核，浏览 Walmart Listing 桌面工具的工作流程。">
-    <meta property="og:type" content="article"><meta property="og:title" content="Walmart Listing 智能体 · DYB 观测站">
+    <meta name="theme-color" content="#f0eee6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1f1e1d" media="(prefers-color-scheme: dark)">
+    <title>Walmart Listing 智能体 — DYB</title><meta name="description" content="从原始货盘到人工审核，浏览 Walmart Listing 桌面工具的工作流程。">
+    <meta property="og:type" content="article"><meta property="og:title" content="Walmart Listing 智能体 — DYB">
     <meta property="og:description" content="从原始货盘到人工审核，浏览 Walmart Listing 桌面工具的工作流程。"><meta property="og:locale" content="zh_CN"><link rel="canonical" href="https://ddddddyb.com/projects/walmart-listing.html"><meta property="og:url" content="https://ddddddyb.com/projects/walmart-listing.html">
-        <meta property="og:image" content="https://ddddddyb.com/assets/galaxy.webp"><meta property="og:image:alt" content="DYB 观测站的原创旋涡星系">
-        <meta name="twitter:card" content="summary_large_image">
-    <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="../assets/site.css?v=11611228ef"><script defer src="../assets/site.js?v=d88b1d0a9b"></script>
-</head><body class="subpage">
-
-    <a class="skip" href="#main-content">跳到主要内容</a>
-    <header class="site-head"><div class="container head-inner">
-      <a class="brand" href="/" aria-label="DYB 观测站首页">
-        <svg class="icon brand-mark" aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg><span class="brand-name">DYB</span><span class="brand-divider"></span><span class="brand-caption">观测站</span>
-      </a>
-      <nav class="main-nav" aria-label="主要导航"><a class="nav-sky" href="/">星图</a><a class="nav-works" href="/projects" aria-current="location">作品</a><a class="nav-notes" href="/blog">手记</a><a class="nav-about" href="/profile">关于</a></nav>
-      <a class="github-head" href="https://github.com/dyb061211" aria-label="DYB 的 GitHub 主页"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#github"></use></svg><span>GitHub</span></a>
-    </div></header><main id="main-content"><div class="case-hero"><div class="container case-heading">
-      <a class="back-map" href="/projects"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg>返回项目列表</a>
-      <p class="eyebrow"><span class="short-rule"></span>作品 <span class="middot">/</span> AI 应用 · 桌面工具 / Coze</p>
-      <h1>Walmart Listing <span>智能体</span></h1><p class="case-intro">从原始货盘出发，把英文文案、商品图、禁用词检查和人工审核串成一条本地工作流程。</p><a class="button source-button" href="https://github.com/dyb061211/walmart-listing-agent"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#github"></use></svg>项目文档</a>
-    </div></div>
-      <div class="paper"><div class="reading-width">
-        <section class="sample flow-demo"><div class="demo-heading"><p class="category"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#branch"></use></svg>流程示意</p><h2>从货盘到商品草稿</h2><p>用一只虚构的玻璃杯走一遍流程。这里展示的是样例内容，所有切换都在浏览器中完成。</p></div>
-        <div class="flow-tabs" aria-label="选择流程步骤" hidden><button type="button" aria-controls="flow-panel-0" aria-pressed="true" data-stage="0">核对货盘</button><button type="button" aria-controls="flow-panel-1" aria-pressed="false" data-stage="1">生成草稿</button><button type="button" aria-controls="flow-panel-2" aria-pressed="false" data-stage="2">人工审核</button></div><section id="flow-panel-0" class="flow-panel" aria-labelledby="flow-title-0"><p class="meta">货盘资料</p><h3 id="flow-title-0">一只琥珀色玻璃杯</h3><p>以原始货盘中的材质、颜色和规格为依据，公开商品页可以补充表达方式和使用场景。</p><div class="example-value"><span>输入</span>SKU GL-02　/　玻璃　/　琥珀色</div></section><section id="flow-panel-1" class="flow-panel" aria-labelledby="flow-title-1"><p class="meta">英文 Listing 草稿</p><h3 id="flow-title-1">Amber Glass Tumbler</h3><p>工具通过 Coze 生成标题、描述与商品图。本页用这一行示例标题展示草稿的形态。</p><div class="example-value"><span>草稿</span>Amber Glass Tumbler</div></section><section id="flow-panel-2" class="flow-panel" aria-labelledby="flow-title-2"><p class="meta">审核与辅助填入</p><h3 id="flow-title-2">逐项对照原始规格</h3><p>先在本机检查禁用词，再由人核对文案与图片。审核通过的内容可以辅助填入 ERP，最终保存和发布仍由人确认。</p><div class="example-value"><span>核对项</span>颜色是否一致？材质描述是否有依据？</div></section></section>
-        <section class="prose"><h2>为什么保留人工审核</h2><p>英文标题读起来顺畅，也可能把颜色写错、把一只杯子写成一套。工作流把原始货盘留作核对依据，把禁用词检查与人工审核放在 ERP 填入之前。</p><p>这个独立项目提供 Windows 和 macOS 发行版。安装说明和支持范围随版本维护在仓库中。</p><div class="source-group"><a class="source-link" href="https://github.com/dyb061211/walmart-listing-agent/blob/main/README.md"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#github"></use></svg>阅读使用说明</a><a class="source-link" href="https://github.com/dyb061211/walmart-listing-agent/releases"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#github"></use></svg>查看发行版本</a></div></section>
-        <a class="reading-return" href="../index.html#star-listing"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg>回到 Walmart Listing 的星点</a>
-      </div></div></main><footer class="foot"><div class="container foot-inner">
-      <a href="/" class="foot-brand"><svg class="icon " aria-hidden="true" focusable="false"><use href="../assets/icons.svg#observatory"></use></svg><span>DYB 观测站</span></a>
-      <span class="foot-handle">@dyb061211</span>
-      <a class="foot-home" href="/">回到星图</a>
-    </div></footer>
-</body></html>
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
+    <link rel="preload" href="/assets/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/blog.css?v=3"><script src="/assets/color-mode.js?v=1"></script><script defer src="/assets/site.js?v=2"></script>
+</head>
+<body class="blog-page" id="top">
+  <a class="blog-skip" href="#main-content">跳到正文</a>
+  <header class="blog-header"><div class="blog-bar">
+    <a class="blog-name" href="/">DYB</a>
+    <nav class="blog-nav" aria-label="站点导航"><a href="/projects" aria-current="page">项目</a><a href="/life">近况</a><a href="/profile">关于</a>
+      <span class="mode-switch"><input type="checkbox" id="mode-toggle" aria-label="深色模式"><label for="mode-toggle" title="切换深浅色"></label></span></nav>
+  </div></header>
+  <main id="main-content" class="blog-main">
+    <article class="blog-reading">
+      <header class="blog-article-head">
+        <h1>Walmart Listing 智能体</h1>
+        <p class="blog-deck">从原始货盘出发，把英文文案、商品图、禁用词检查和人工审核串成一条本地工作流程。</p>
+        <p class="blog-article-meta"><span>项目</span><span>桌面工具 · Coze</span><a href="https://github.com/dyb061211/walmart-listing-agent" target="_blank" rel="noopener noreferrer">项目文档</a></p>
+      </header>
+      <div class="blog-prose">
+        <section class="sample flow-demo" aria-labelledby="flow-heading">
+          <div class="demo-heading"><span class="category"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons.svg?v=8#branch"></use></svg>流程示意</span>
+            <h2 id="flow-heading">从货盘到商品草稿</h2>
+            <p>用一只虚构的玻璃杯走一遍流程。这里展示的是样例内容，所有切换都在浏览器中完成。</p>
+          </div>
+          <div class="flow-tabs" aria-label="选择流程步骤" hidden>
+            <button type="button" aria-controls="flow-panel-0" aria-pressed="true" data-stage="0">核对货盘</button>
+            <button type="button" aria-controls="flow-panel-1" aria-pressed="false" data-stage="1">生成草稿</button>
+            <button type="button" aria-controls="flow-panel-2" aria-pressed="false" data-stage="2">人工审核</button>
+          </div>
+          <section id="flow-panel-0" class="flow-panel" aria-labelledby="flow-title-0">
+            <p class="meta">货盘资料</p><h3 id="flow-title-0">一只琥珀色玻璃杯</h3>
+            <p>以原始货盘中的材质、颜色和规格为依据，公开商品页可以补充表达方式和使用场景。</p>
+            <div class="example-value"><span>输入</span>SKU GL-02　/　玻璃　/　琥珀色</div>
+          </section>
+          <section id="flow-panel-1" class="flow-panel" aria-labelledby="flow-title-1">
+            <p class="meta">英文 Listing 草稿</p><h3 id="flow-title-1">Amber Glass Tumbler</h3>
+            <p>工具通过 Coze 生成标题、描述与商品图。本页用这一行示例标题展示草稿的形态。</p>
+            <div class="example-value"><span>草稿</span>Amber Glass Tumbler</div>
+          </section>
+          <section id="flow-panel-2" class="flow-panel" aria-labelledby="flow-title-2">
+            <p class="meta">审核与辅助填入</p><h3 id="flow-title-2">逐项对照原始规格</h3>
+            <p>先在本机检查禁用词，再由人核对文案与图片。审核通过的内容可以辅助填入 ERP，最终保存和发布仍由人确认。</p>
+            <div class="example-value"><span>核对项</span>颜色是否一致？材质描述是否有依据？</div>
+          </section>
+        </section>
+        <h2>为什么保留人工审核</h2>
+        <p>英文标题读起来顺畅，也可能把颜色写错、把一只杯子写成一套。工作流把原始货盘留作核对依据，把禁用词检查与人工审核放在 ERP 填入之前。</p>
+        <p>这个独立项目提供 Windows 和 macOS 发行版。安装说明和支持范围随版本维护在仓库中。</p>
+        <div class="source-group">
+          <a class="source-link" href="https://github.com/dyb061211/walmart-listing-agent/blob/main/README.md" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons.svg?v=8#github"></use></svg>阅读使用说明</a>
+          <a class="source-link" href="https://github.com/dyb061211/walmart-listing-agent/releases" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons.svg?v=8#github"></use></svg>查看发行版本</a>
+        </div>
+      </div>
+      <hr class="blog-dinkus">
+      <nav class="blog-article-foot" aria-label="页面导航"><a href="/projects">← 全部项目</a><a href="/">回到首页</a></nav>
+    </article>
+  </main>
+  <footer class="blog-footer"><span>DYB</span><a href="#top">回到顶部 ↑</a></footer>
+</body>
+</html>

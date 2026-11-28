@@ -17,20 +17,21 @@ export function repositorySection(snapshot) {
   const { page, repositories, hasNext, stale, syncedAt } = snapshot;
   const rows = repositories.filter(repo => !featuredProjects.some(project => project.id === repo.id)).map(repo => {
     const label = repositoryLabels.get(repo.name);
-    const description = !label && repo.description ? `<span class="repo-description">${e(repo.description)}</span>` : "";
-    const fork = repo.fork ? '<small class="repo-fork">Fork</small>' : "";
-    return `<a class="simple-row synced-repo" href="${git}/${encodeURIComponent(repo.name)}"><span class="repo-summary"><span>${e(label || repo.name)}${fork}</span>${description}</span><span class="repo-code">${e(label ? repo.name : repo.language)}</span></a>`;
+    const description = !label && repo.description ? `<p class="repo-desc">${e(repo.description)}</p>` : "";
+    const fork = repo.fork ? '<span class="repo-fork">Fork</span>' : "";
+    const meta = e(label ? repo.name : repo.language);
+    return `<li><a href="${git}/${encodeURIComponent(repo.name)}" target="_blank" rel="noopener noreferrer">${e(label || repo.name)}</a>${fork}${meta ? `<span class="blog-note">${meta}</span>` : ""}${description}</li>`;
   }).join("");
   let status = "";
   if (stale && syncedAt) {
     const stamp = new Date(syncedAt).toISOString();
     status = `GitHub 暂时连接不上，显示 <time datetime="${stamp}">${stamp.slice(0, 16).replace("T", " ")} UTC</time> 的记录。`;
   } else if (stale) status = "GitHub 暂时连接不上，稍后会自动重试。";
-  const empty = stale && !syncedAt ? `<a class="plain-link" href="${git}?tab=repositories">在 GitHub 查看公开仓库</a>`
+  const empty = stale && !syncedAt ? `<a class="plain-link" href="${git}?tab=repositories" target="_blank" rel="noopener noreferrer">在 GitHub 查看公开仓库</a>`
     : "这一页没有其他公开仓库。";
   const pageLink = (n, text) => `<a href="/projects${n === 1 ? "" : `?page=${n}`}#repositories">${text}</a>`;
-  const pages = page > 1 || hasNext ? `<nav class="pagination" aria-label="仓库翻页">${page > 1 ? pageLink(page-1, "上一页") : ""}${hasNext ? pageLink(page+1, "下一页") : ""}</nav>` : "";
-  return `<section id="repositories" aria-labelledby="repositories-title" data-page="${page}" data-stale="${stale}" data-synced-at="${syncedAt}" data-refresh-in="${Math.max(1000, snapshot.nextCheckAt - Date.now())}">
-    <div class="list-heading subheading"><h2 id="repositories-title">更多仓库</h2><p class="repo-sync" role="status">${status}</p></div>
-    <div class="rows">${rows || `<p class="empty-line">${empty}</p>`}</div>${pages}</section>`;
+  const pages = page > 1 || hasNext ? `<nav class="pagination" aria-label="仓库翻页">${page > 1 ? pageLink(page - 1, "← 上一页") : ""}${hasNext ? pageLink(page + 1, "下一页 →") : ""}</nav>` : "";
+  return `<section class="blog-section" id="repositories" aria-labelledby="repositories-title" data-page="${page}" data-stale="${stale}" data-synced-at="${syncedAt}" data-refresh-in="${Math.max(1000, snapshot.nextCheckAt - Date.now())}">
+    <div class="blog-section-head"><h2 id="repositories-title">更多仓库</h2><p class="repo-sync" role="status">${status}</p></div>
+    ${rows ? `<ul class="repo-list">${rows}</ul>` : `<p class="empty-line">${empty}</p>`}${pages}</section>`;
 }

@@ -1,5 +1,5 @@
 import { emptyPage, refreshPage } from "./github-api.js";
-import { repositorySection } from "./github-catalog.js?v=9";
+import { repositorySection } from "./github-catalog.js?v=10";
 
 const section = document.getElementById("repositories");
 const page = Number(section.dataset.page);

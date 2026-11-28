@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "DYB 观测站",
-  description: "DYB 的星图、博客、项目与生活记录。",
+  title: "DYB",
+  description: "DYB 的个人博客，记录软件工程学习、项目实践与随笔。",
   icons: { icon: "/assets/mark.svg" }
 };
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
