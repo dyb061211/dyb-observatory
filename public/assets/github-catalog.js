@@ -15,12 +15,13 @@ const repositoryLabels = new Map([
 /** @param {import("../../lib/repositories").RepositoryPage} snapshot */
 export function repositorySection(snapshot) {
   const { page, repositories, hasNext, stale, syncedAt } = snapshot;
-  const rows = repositories.filter(repo => !featuredProjects.some(project => project.id === repo.id)).map(repo => {
+  const visible = repositories.filter(repo => !featuredProjects.some(project => project.id === repo.id));
+  const rows = visible.map(repo => {
     const label = repositoryLabels.get(repo.name);
     const description = !label && repo.description ? `<p class="repo-desc">${e(repo.description)}</p>` : "";
     const fork = repo.fork ? '<span class="repo-fork">Fork</span>' : "";
     const meta = e(label ? repo.name : repo.language);
-    return `<li><a href="${git}/${encodeURIComponent(repo.name)}" target="_blank" rel="noopener noreferrer">${e(label || repo.name)}</a>${fork}${meta ? `<span class="blog-note">${meta}</span>` : ""}${description}</li>`;
+    return `<li><div class="repo-main"><a href="${git}/${encodeURIComponent(repo.name)}" target="_blank" rel="noopener noreferrer">${e(label || repo.name)}</a>${fork}${description}</div>${meta ? `<span class="repo-meta">${meta}</span>` : ""}</li>`;
   }).join("");
   let status = "";
   if (stale && syncedAt) {
@@ -31,7 +32,8 @@ export function repositorySection(snapshot) {
     : "这一页没有其他公开仓库。";
   const pageLink = (n, text) => `<a href="/projects${n === 1 ? "" : `?page=${n}`}#repositories">${text}</a>`;
   const pages = page > 1 || hasNext ? `<nav class="pagination" aria-label="仓库翻页">${page > 1 ? pageLink(page - 1, "← 上一页") : ""}${hasNext ? pageLink(page + 1, "下一页 →") : ""}</nav>` : "";
+  const count = visible.length ? `<span class="section-count">${String(visible.length).padStart(2, "0")}</span>` : "";
   return `<section class="blog-section" id="repositories" aria-labelledby="repositories-title" data-page="${page}" data-stale="${stale}" data-synced-at="${syncedAt}" data-refresh-in="${Math.max(1000, snapshot.nextCheckAt - Date.now())}">
-    <div class="blog-section-head"><h2 id="repositories-title">更多仓库</h2><p class="repo-sync" role="status">${status}</p></div>
+    <div class="blog-section-head"><div class="blog-section-title"><h2 id="repositories-title">更多仓库</h2>${count}</div><p class="repo-sync" role="status">${status}</p></div>
     ${rows ? `<ul class="repo-list">${rows}</ul>` : `<p class="empty-line">${empty}</p>`}${pages}</section>`;
 }

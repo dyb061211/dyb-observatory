@@ -9,6 +9,13 @@ const shortDate = (time: number) => {
   return `${parts.year}.${parts.month}.${parts.day}`;
 };
 
+function readingMinutes(source: string) {
+  const plain = source.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]+`/g, " ");
+  const cjk = (plain.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
+  const latin = plain.replace(/[\u4e00-\u9fff\u3400-\u4dbf]/g, " ").trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(cjk / 350 + latin / 220));
+}
+
 export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEntries>>, author: string | null, drafts: boolean, page: number) {
   const life = s.slug === "life";
   const label = life ? "动态" : "文章";
@@ -18,7 +25,8 @@ export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEnt
     ? `<div class="station-actions"><a href="/life?edit=new&amp;topic=近况">写近况</a><a href="/life?edit=new&amp;topic=经历">记一段经历</a></div>`
     : `<div class="station-actions"><a href="/?edit=new">写文章</a></div>`) : import.meta.env.DEV
     ? `<div class="station-actions"><a href="/signin-with-chatgpt?return_to=${base}" target="_top">登录测试作者</a></div>` : "";
-  const rows = list.slice(0, pageSize).map(row => {
+  const visible = list.slice(0, pageSize);
+  const rows = visible.map(row => {
     const url = `${base}?${drafts ? "edit" : "read"}=${row.id}`;
     const title = row.title || "无标题草稿";
     const topic = e(row.topic || label);
@@ -30,23 +38,25 @@ export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEnt
   const paging = (page > 0 ? `<a href="${listUrl}&amp;page=${page - 1}#entries">← ${life ? "较新的记录" : "较新的文章"}</a>` : "") +
     (list.length > pageSize ? `<a href="${listUrl}&amp;page=${page + 1}#entries">${life ? "更早的记录" : "更早的文章"} →</a>` : "");
   const extra = !life && !drafts && list.length <= pageSize ? existingArticles() : "";
+  const total = visible.length + (extra ? 2 : 0);
+  const countBadge = !drafts && page === 0 && total > 0 ? `<span class="section-count">${String(total).padStart(2, "0")}</span>` : "";
   const empty = rows || extra ? "" : `<p class="empty-line">${drafts ? "草稿箱是空的。" : life ? "还没有发表生活动态。" : "还没有文章。"}</p>`;
   const tabs = author ? `<div class="index-tabs"><a href="${base}#entries" ${!drafts ? 'aria-current="page"' : ""}>已发表</a><a href="${base}?list=drafts#entries" ${drafts ? 'aria-current="page"' : ""}>草稿箱</a></div>` : "";
   if (!life) {
     return shell(s, `<h1 class="sr-only">DYB</h1>
     ${!drafts && page === 0 ? `<section class="blog-intro" aria-label="关于这里">${blogIntro()}</section>` : ""}
     <section class="blog-section" id="entries" aria-labelledby="blog-list-title">
-      <div class="blog-section-head"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${compose}</div>
+      <div class="blog-section-head"><div class="blog-section-title"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${countBadge}</div>${compose}</div>
       ${tabs}
       ${rows || extra ? `<ul class="blog-list">${rows}${extra}</ul>` : empty}
       ${paging ? `<nav class="pagination" aria-label="文章分页">${paging}</nav>` : ""}
     </section>
-    ${drafts || page > 0 ? "" : `<section class="blog-section" aria-labelledby="blog-projects-title"><div class="blog-section-head"><h2 id="blog-projects-title">项目</h2><a class="section-more" href="/projects">全部 →</a></div>
-      <ul class="blog-list">${blogFeaturedProjects()}</ul></section>`}`);
+    ${drafts || page > 0 ? "" : `<section class="blog-section" aria-labelledby="blog-projects-title"><div class="blog-section-head"><div class="blog-section-title"><h2 id="blog-projects-title">项目</h2></div><a class="section-more" href="/projects">全部 →</a></div>
+      ${blogFeaturedProjects()}</section>`}`);
   }
   return shell(s, `<header class="blog-page-head"><h1>近况</h1><p>软件工程在读，最近在学 Java 后端，也在做 Python 和 AI 小工具。</p></header>
     <section class="blog-section" id="entries" aria-labelledby="life-list-title">
-      <div class="blog-section-head"><h2 id="life-list-title">${drafts ? "我的草稿" : "记录"}</h2>${compose}</div>
+      <div class="blog-section-head"><div class="blog-section-title"><h2 id="life-list-title">${drafts ? "我的草稿" : "记录"}</h2>${countBadge}</div>${compose}</div>
       ${tabs}
       ${rows ? `<ul class="blog-list">${rows}</ul>` : empty}
       ${paging ? `<nav class="pagination" aria-label="记录分页">${paging}</nav>` : ""}
@@ -55,9 +65,10 @@ export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEnt
 
 // Escape text before emitting any inline formatting. Only explicit http(s) links become anchors.
 function inline(text: string) {
-  return text.split(/(`[^`\n]+`|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\(https?:\/\/[^()\s]+\))/g).map(part => {
+  return text.split(/(`[^`\n]+`|\*\*[^*\n]+\*\*|\*[^*\n]+\*|\[[^\]\n]+\]\(https?:\/\/[^()\s]+\))/g).map(part => {
     if (part.startsWith("`") && part.endsWith("`") && part.length > 2) return "<code>" + e(part.slice(1, -1)) + "</code>";
     if (part.startsWith("**") && part.endsWith("**") && part.length > 4) return "<strong>" + e(part.slice(2, -2)) + "</strong>";
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 2) return "<em>" + e(part.slice(1, -1)) + "</em>";
     const link = part.match(/^\[([^\]\n]+)\]\((https?:\/\/[^()\s]+)\)$/);
     if (link) return '<a rel="noopener noreferrer" href="' + e(link[2]) + '">' + e(link[1]) + "</a>";
     return e(part);
@@ -80,6 +91,7 @@ export function articleBody(source: string) {
     }
     if (fenced) { code.push(line); continue; }
     if (!line.trim()) { flush(); continue; }
+    if (/^---+\s*$/.test(line.trim())) { flush(); out.push('<hr class="prose-rule">'); continue; }
     const heading = line.match(/^(#{1,3})\s+(.+)$/), quote = line.match(/^>\s?(.*)$/), item = line.match(/^[-*]\s+(.+)$/);
     if (heading) { flush(); const tag = heading[1].length === 3 ? "h3" : "h2"; out.push("<" + tag + ">" + inline(heading[2]) + "</" + tag + ">"); }
     else if (quote) { flush(); out.push("<blockquote>" + inline(quote[1]) + "</blockquote>"); }
@@ -95,10 +107,12 @@ export function reader(s: Station, text: { id: string; title: string; body: stri
   const life = s.slug === "life";
   const base = life ? "/life" : "/";
   const action = author ? `<a class="plain-link" href="${base}?edit=${text.id}">编辑${life ? "记录" : "文章"}</a>` : "";
+  const mins = readingMinutes(text.body);
   return shell(s, `<article class="blog-reading">
     <header class="blog-article-head">
+      <p class="blog-article-meta">${text.topic ? `<span class="meta-topic">${e(text.topic)}</span>` : ""}<time datetime="${new Date(text.date).toISOString()}">${formattedDate.format(text.date)}</time><span>约 ${mins} 分钟阅读</span></p>
       <h1>${e(text.title)}</h1>
-      <p class="blog-article-meta"><time datetime="${new Date(text.date).toISOString()}">${formattedDate.format(text.date)}</time>${text.topic ? `<span>${e(text.topic)}</span>` : ""}</p>
+      <div class="article-rule" aria-hidden="true"></div>
     </header>
     <div class="blog-prose">${articleBody(text.body)}</div>
     <hr class="blog-dinkus">
@@ -124,7 +138,7 @@ export function editor(s: Station, d: Draft, options: { saved?: boolean; error?:
     <fieldset${options.preview ? " hidden" : ""}><label for="title">标题</label><input id="title" name="title" maxlength="160" placeholder="${life ? "这段日子在做什么" : "给文章起个名字"}" value="${e(d.title)}">
        <label for="topic">${life ? "记录类型" : "分类（选填）"}</label>${topic}
        <label for="body">正文</label><textarea id="body" name="body" maxlength="120000" placeholder="从第一句话开始……">${e(d.body)}</textarea>
-       <small>支持 Markdown 的标题、列表、引用、链接和代码块。</small></fieldset>
+       <small>支持 Markdown 的标题、粗体/斜体、分隔线、列表、引用、链接和代码块。</small></fieldset>
     <div class="editor-actions"><button type="submit" class="primary-link" name="intent" value="draft">保存草稿</button>
        <button type="submit" name="intent" value="${options.preview ? "continue" : "preview"}">${options.preview ? "继续编辑" : "预览排版"}</button>
        <button type="submit" name="intent" value="publish">${options.published ? "更新已发表版本" : "发表" + subject}</button></div>${confirm}</form></div>`, { title: head });

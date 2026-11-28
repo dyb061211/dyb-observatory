@@ -1,28 +1,29 @@
 <!doctype html>
 <html lang="zh-CN"><head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#f0eee6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1f1e1d" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#151413" media="(prefers-color-scheme: dark)">
     <title>为什么要把 UPC 存成文本？ — DYB</title><meta name="description" content="用商品条码说明前导零、字段类型与数据清洗之间的关系。">
     <meta property="og:type" content="article"><meta property="og:title" content="为什么要把 UPC 存成文本？ — DYB">
     <meta property="og:description" content="用商品条码说明前导零、字段类型与数据清洗之间的关系。"><meta property="og:locale" content="zh_CN"><link rel="canonical" href="https://ddddddyb.com/notes/upc-text.html"><meta property="og:url" content="https://ddddddyb.com/notes/upc-text.html">
     <meta name="twitter:card" content="summary">
     <link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
     <link rel="preload" href="/assets/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="/assets/blog.css?v=3"><script src="/assets/color-mode.js?v=1"></script>
+    <link rel="stylesheet" href="/assets/blog.css?v=5"><script src="/assets/color-mode.js?v=2"></script>
 </head>
 <body class="blog-page" id="top">
   <a class="blog-skip" href="#main-content">跳到正文</a>
   <header class="blog-header"><div class="blog-bar">
-    <a class="blog-name" href="/">DYB</a>
-    <nav class="blog-nav" aria-label="站点导航"><a href="/projects">项目</a><a href="/life">近况</a><a href="/profile">关于</a>
-      <span class="mode-switch"><input type="checkbox" id="mode-toggle" aria-label="深色模式"><label for="mode-toggle" title="切换深浅色"></label></span></nav>
+    <a class="blog-name" href="/">DYB<span class="blog-seal" aria-hidden="true"></span></a>
+    <nav class="blog-nav" aria-label="站点导航"><a href="/" aria-current="page">文章</a><a href="/projects">项目</a><a href="/life">近况</a><a href="/profile">关于</a>
+      <button type="button" id="mode-toggle" class="mode-toggle" aria-label="切换深浅色"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button></nav>
   </div></header>
   <main id="main-content" class="blog-main">
     <article class="blog-reading">
       <header class="blog-article-head">
+        <p class="blog-article-meta"><span class="meta-topic">Python · 数据清洗</span><span>开发手记</span><span>约 2 分钟阅读</span></p>
         <h1>为什么要把 UPC 存成文本？</h1>
         <p class="blog-deck">当单元格里的 00145 被读成数字 145，消失的两个零已经无法从这个值本身找回来。</p>
-        <p class="blog-article-meta"><span>开发手记</span><span>Python · 数据清洗</span></p>
+        <div class="article-rule" aria-hidden="true"></div>
       </header>
       <div class="blog-prose"><h2>先判断字段的用途</h2><p>价格可以相加，条码用来识别商品。由数字组成的标识符依然可以需要前导零。Product Normalizer 读取 Excel 时指定文本类型，再按字段执行清洗。</p>
         <div class="note-example"><span class="category">项目中的条码处理示例</span><dl class="example-pair"><div><dt>输入文本</dt><dd><code>"00 145.0"</code></dd></div><div><dt>清洗后</dt><dd><code>"00145"</code></dd></div></dl></div>
@@ -31,9 +32,9 @@
         <div class="source-group"><a class="source-link" href="../projects/product-normalizer.html#data-demo"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons.svg?v=8#table"></use></svg>运行两表示例</a><a class="source-link" href="https://github.com/dyb061211/product-normalizer/blob/main/product_normalizer/cleaner.py"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons.svg?v=8#github"></use></svg>查看字段清洗规则</a></div>
       </div>
       <hr class="blog-dinkus">
-      <nav class="blog-article-foot" aria-label="文章导航"><a href="/">← 全部文章</a><a href="/notes/catalog-order.html">上一篇：商品目录为什么要保留录入顺序？</a></nav>
+      <nav class="blog-article-foot" aria-label="文章导航"><a href="/">← 全部文章</a><a href="/notes/catalog-order.html">上一篇：商品目录为什么要保留录入顺序？ →</a></nav>
     </article>
   </main>
-  <footer class="blog-footer"><span>DYB</span><a href="#top">回到顶部 ↑</a></footer>
+  <footer class="blog-footer"><div class="blog-footer-inner"><span>DYB · 写于日常与代码之间</span><span class="blog-footer-links"><a href="https://github.com/dyb061211" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#top">回到顶部 ↑</a></span></div></footer>
 </body>
 </html>
