@@ -34,8 +34,8 @@ export function shell(s: Station, content: string, options: { title?: string; he
       <title>${pageTitle}</title><meta name="description" content="${e(s.note)}">
       <meta name="theme-color" content="#4e6f95" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0b0f18" media="(prefers-color-scheme: dark)">
       <link rel="icon" href="/assets/mark.svg"><link rel="preload" href="/assets/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-      <link rel="stylesheet" href="/assets/blog.css?v=6"><script src="/assets/color-mode.js?v=3"></script>
-      <script type="module" src="/assets/horizon-sky.js?v=1"></script>
+      <link rel="stylesheet" href="/assets/blog.css?v=7"><script src="/assets/color-mode.js?v=4"></script>
+      <script type="module" src="/assets/horizon-sky.js?v=2"></script>
       <script type="module" src="/assets/interiors.js?v=12"></script></head>
       <body class="blog-page" id="top"><a class="blog-skip" href="#station-content">跳到正文</a>
       <div class="horizon-stage${options.hero ? "" : " compact"}"><canvas class="horizon-canvas" aria-hidden="true"></canvas>${renderHeader(s.slug)}</div>
