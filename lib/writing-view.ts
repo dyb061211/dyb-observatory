@@ -1,40 +1,47 @@
-import { escapeHTML as e, icon, type Station } from "./stations";
-import { blogEntry, existingArticles, currentLife, shell } from "./interiors";
+import { escapeHTML as e, type Station } from "./stations";
+import { blogElsewhere, blogEntry, blogIntro, existingArticles, currentLife, shell } from "./interiors";
 import { pageSize, type Draft, type listEntries } from "./entries";
 
 const formattedDate = new Intl.DateTimeFormat("zh-CN", { timeZone:"America/New_York",year:"numeric",month:"long",day:"numeric" });
+const shortDate = (time: number) => {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit" })
+    .formatToParts(time).map(p => [p.type, p.value]));
+  return `${parts.year}.${parts.month}.${parts.day}`;
+};
 export function writingIndex(s: Station, list: Awaited<ReturnType<typeof listEntries>>, author: string | null, drafts: boolean, page: number) {
   const life=s.slug==="life", label=life?"动态":"文章", path="/"+s.slug, listUrl=path+(drafts?"?list=drafts":"?list=published");
   const compose=author?(life
     ? `<div class="station-actions"><a class="primary-link" href="/life?edit=new&amp;topic=近况">写近况</a><a class="plain-link" href="/life?edit=new&amp;topic=经历">记一段经历</a></div>`
-    : `<div class="station-actions"><a class="primary-link" href="/blog?edit=new">${icon("book")}写文章</a></div>`):import.meta.env.DEV?
+    : `<div class="station-actions"><a href="/blog?edit=new">写文章</a></div>`):import.meta.env.DEV?
     `<div class="station-actions"><a class="plain-link" href="/signin-with-chatgpt?return_to=/${s.slug}" target="_top">登录测试作者</a></div>`:"";
   const rows = list.slice(0, pageSize).map(row => {
     const url = `${path}?${drafts ? "edit" : "read"}=${row.id}`;
     const title = row.title || "无标题草稿";
     const topic = e(row.topic || label);
-    const date = `<time datetime="${new Date(row.date!).toISOString()}">${formattedDate.format(row.date!)}</time>`;
     const revision = drafts && row.wasPublished ? " · 已发表文章的修订" : "";
-    return life
-      ? `<a class="entry-row" href="${url}"><small>${topic}<i>·</i>${date}${revision}</small><h3>${e(title)}</h3></a>`
-      : blogEntry(url, title, `${date}<span>${topic}${revision}</span>`);
+    if (!life) {
+      const date = `<time datetime="${new Date(row.date!).toISOString()}">${shortDate(row.date!)}</time>`;
+      return blogEntry(url, title, `${row.topic ? topic + " · " : ""}${date}${revision}`);
+    }
+    const date = `<time datetime="${new Date(row.date!).toISOString()}">${formattedDate.format(row.date!)}</time>`;
+    return `<a class="entry-row" href="${url}"><small>${topic}<i>·</i>${date}${revision}</small><h3>${e(title)}</h3></a>`;
   }).join("");
-  const paging=(page>0?`<a href="${listUrl}&amp;page=${page-1}#entries">上一页</a>`:"")+
-    (list.length>pageSize?`<a href="${listUrl}&amp;page=${page+1}#entries">下一页</a>`:"");
+  const paging=(page>0?`<a href="${listUrl}&amp;page=${page-1}#entries">${life?"上一页":"← 较新的文章"}</a>`:"")+
+    (list.length>pageSize?`<a href="${listUrl}&amp;page=${page+1}#entries">${life?"下一页":"更早的文章 →"}</a>`:"");
   const extra = !life && !drafts && list.length <= pageSize ? existingArticles() : "";
   const empty=rows||extra?"":`<p class="empty-line">${drafts?"草稿箱是空的。":life?"还没有发表生活动态。":"还没有文章。"}</p>`;
   const tabs=author?`<div class="index-tabs"><a href="${path}#entries" ${!drafts?'aria-current="page"':''}>已发表</a><a href="${path}?list=drafts#entries" ${drafts?'aria-current="page"':''}>草稿箱</a></div>`:"";
   if (!life) {
-    return shell(s, `<section class="blog-intro" aria-labelledby="blog-title">
-      <h1 id="blog-title">DYB 的博客</h1>
-      <p>${e(s.note)}</p>
-    </section>
-    <section class="blog-archive" id="entries" aria-labelledby="blog-list-title">
-      <div class="blog-list-head"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${compose}</div>
+    return shell(s, `<h1 class="sr-only">DYB 的博客</h1>
+    <section class="blog-intro" aria-label="关于这里">${blogIntro()}</section>
+    <section class="blog-section" id="entries" aria-labelledby="blog-list-title">
+      <div class="blog-section-head"><h2 id="blog-list-title">${drafts ? "我的草稿" : "文章"}</h2>${compose}</div>
       ${tabs}
       ${rows || extra ? `<ul class="blog-list">${rows}${extra}</ul>` : empty}
       ${paging ? `<nav class="pagination" aria-label="文章分页">${paging}</nav>` : ""}
-    </section>`);
+    </section>
+    ${drafts ? "" : `<section class="blog-section" aria-labelledby="blog-elsewhere-title"><h2 id="blog-elsewhere-title">观测站的其他地方</h2>
+      <ul class="blog-list">${blogElsewhere()}</ul></section>`}`);
   }
   return shell(s,`<div class="station-content life-grid" id="entries"><div><div class="list-heading"><h2>${drafts?"我的草稿":"生活记录"}</h2>${tabs}</div>
     <div class="rows">${rows}${empty}</div>${paging?'<nav class="pagination">'+paging+'</nav>':""}</div>${currentLife()}</div>`,{actions:compose});
@@ -78,12 +85,13 @@ export function reader(s: Station, text: {id:string; title:string; body:string; 
   const action=author?`<a class="plain-link" href="/${s.slug}?edit=${text.id}">编辑${s.slug==="life"?"记录":"文章"}</a>`:"";
   if (s.slug === "blog") {
     return shell(s, `<article class="blog-reading">
-      <nav class="editor-nav" aria-label="文章导航"><a href="/blog">全部文章</a>${action}</nav>
       <header class="blog-article-head">
-        <p class="blog-article-meta"><span>${e(text.topic || s.title)}</span><time datetime="${new Date(text.date).toISOString()}">${formattedDate.format(text.date)}</time></p>
         <h1>${e(text.title)}</h1>
+        <p class="blog-article-meta"><time datetime="${new Date(text.date).toISOString()}">${formattedDate.format(text.date)}</time>${text.topic ? `<span>${e(text.topic)}</span>` : ""}</p>
       </header>
       <div class="blog-prose">${articleBody(text.body)}</div>
+      <hr class="blog-dinkus">
+      <nav class="blog-article-foot" aria-label="文章导航"><a href="/blog">← 全部文章</a>${action}</nav>
     </article>`, { title: text.title });
   }
   return shell(s,`<article class="manuscript reading"><div class="editor-nav"><a href="/${s.slug}">${s.title}</a>${action}</div>

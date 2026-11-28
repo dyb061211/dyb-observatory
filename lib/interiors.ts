@@ -12,16 +12,13 @@ const profiles = [
 export function shell(s: Station, content: string, options: {compact?:boolean; actions?:string; title?:string}={}) {
   if (s.slug === "blog") {
     return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-      <title>${e(options.title || "博客")} · DYB 观测站</title><meta name="theme-color" content="#f8f6f0"><meta name="description" content="${e(s.note)}">
-      <link rel="icon" href="/assets/mark.svg"><link rel="stylesheet" href="/assets/blog.css?v=1">
-      <script type="module" src="/assets/interiors.js?v=10"></script></head>
-      <body class="blog-page"><a class="blog-skip" href="#station-content">跳到正文</a>
-      <header class="blog-masthead">
-        <a class="blog-brand" href="/blog">${icon("observatory")}<span>DYB 观测站</span></a>
-        <nav aria-label="博客导航"><a href="/#star-normalizer">返回星图</a><a href="/profile">关于</a></nav>
-      </header>
-      <main class="blog-main" id="station-content">${content}</main>
-      <footer class="blog-footer"><a href="/blog">博客</a><a href="${git}">GitHub</a></footer></body></html>`;
+      <title>${e(options.title || "博客")} · DYB 观测站</title><meta name="description" content="${e(s.note)}">
+      <meta name="theme-color" content="#f0eee6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1f1e1d" media="(prefers-color-scheme: dark)">
+      <link rel="icon" href="/assets/mark.svg"><link rel="preload" href="/assets/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+      <link rel="stylesheet" href="/assets/blog.css?v=2"><script src="/assets/color-mode.js?v=1"></script>
+      <script type="module" src="/assets/interiors.js?v=11"></script></head>
+      <body class="blog-page" id="top"><a class="blog-skip" href="#station-content">跳到正文</a>${blogHeader}
+      <main class="blog-main" id="station-content">${content}</main>${blogFooter}</body></html>`;
   }
   const compact = !!options.compact;
   const stationNav = stations.map(t => `<a href="/${t.slug}"${t.slug===s.slug?' aria-current="page"':''}>${t.title}</a>`).join("");
@@ -74,14 +71,28 @@ export function profile() {
 export function reserve() {
   return "";
 }
-export function blogEntry(url: string, title: string, metadata: string, summary = "") {
-  return `<li class="blog-entry"><a href="${e(url)}"><span class="blog-entry-meta">${metadata}</span>
-    <div class="blog-entry-copy"><h3>${e(title)}</h3>${summary ? `<p>${e(summary)}</p>` : ""}</div>
-  </a></li>`;
+// Shared chrome for every blog page. Static notes in public/notes/ copy this markup by hand.
+const blogHeader = `<header class="blog-header"><div class="blog-bar">
+        <a class="blog-name" href="/blog">DYB</a>
+        <nav class="blog-nav" aria-label="博客导航"><a href="/#star-normalizer">星图</a><a href="/profile">关于</a>
+          <span class="mode-switch"><input type="checkbox" id="mode-toggle" aria-label="深色模式"><label for="mode-toggle" title="切换深浅色"></label></span></nav>
+      </div></header>`;
+const blogFooter = `<footer class="blog-footer"><span>DYB 观测站</span><a href="#top">回到顶部 ↑</a></footer>`;
+export function blogEntry(url: string, title: string, note: string) {
+  return `<li class="blog-entry"><a href="${e(url)}">${e(title)}</a><span class="blog-note">${note}</span></li>`;
 }
 export function existingArticles() {
-  return blogEntry("/notes/catalog-order.html", "商品目录为什么要保留录入顺序？", "Java · 集合", "从一个 SKU 查询和排序的小问题，认识 LinkedHashMap。")
-    + blogEntry("/notes/upc-text.html", "为什么要把 UPC 存成文本？", "Python · 数据清洗", "一个开头的零，足以让两个看似相同的条码产生差别。");
+  return blogEntry("/notes/catalog-order.html", "商品目录为什么要保留录入顺序？", "Java · 集合")
+    + blogEntry("/notes/upc-text.html", "为什么要把 UPC 存成文本？", "Python · 数据清洗");
+}
+export function blogIntro() {
+  const links = profiles.map(([name, , url, id]) => `<a href="${e(url)}"${id === "mail" ? "" : ' target="_blank" rel="noopener noreferrer"'}>${e(id === "mail" ? "写信" : name)}</a>`).join("");
+  return `<p>我是 DYB，在读软件工程，喜欢做些日常用得上的小工具。这里写下做项目时遇见的问题，也留些地方给随笔。</p>
+      <p class="blog-links">${links}</p>`;
+}
+export function blogElsewhere() {
+  const places = [["星图", "/#star-normalizer", "回到观测站"], ...stations.filter(t => t.slug !== "blog" && t.slug !== "reserve").map(t => [t.title, `/${t.slug}`, t.hint])];
+  return places.map(([name, url, note]) => `<li><a href="${e(url)}">${e(name)}</a><span class="blog-note">${e(note)}</span></li>`).join("");
 }
 export function currentLife() {
   return `<aside class="life-aside"><h3>目前的状态</h3>
