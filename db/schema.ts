@@ -24,6 +24,27 @@ export const entries = sqliteTable("entries", {
   index("entries_drafts").on(t.author, t.station, t.hasDraft, t.edited)
 ]);
 
+export const siteCopy = sqliteTable("site_copy", {
+  key: text("key").primaryKey(),
+  content: text("content").notNull(),
+  updatedAt: integer("updated_at").notNull()
+});
+
+export const featuredProjects = sqliteTable("featured_projects", {
+  id: text("id").primaryKey(),
+  repoId: integer("repo_id"),
+  repoName: text("repo_name").notNull(),
+  name: text("name").notNull(),
+  tech: text("tech").notNull(),
+  detail: text("detail").notNull(),
+  demoUrl: text("demo_url").notNull(),
+  demoLabel: text("demo_label").notNull(),
+  sortOrder: integer("sort_order").notNull(),
+  updatedAt: integer("updated_at").notNull()
+});
+
+export type FeaturedProject = typeof featuredProjects.$inferSelect;
+
 export type PublicRepository = {
   id: number;
   name: string;

@@ -5,9 +5,11 @@ function markDirty(on) {
   if (on) window.addEventListener("beforeunload", leave);
   else window.removeEventListener("beforeunload", leave);
 }
-document.addEventListener("input", ev => { if (!dirty && ev.target.closest(".writing-form")) markDirty(true); });
+document.addEventListener("input", ev => {
+  if (!dirty && ev.target.closest(".writing-form:not(.project-form)")) markDirty(true);
+});
 document.addEventListener("keydown", ev => {
-  const form = ev.target.closest(".writing-form");
+  const form = ev.target.closest(".writing-form:not(.project-form)");
   if (form && (ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "s") {
     ev.preventDefault();
     form.requestSubmit(form.querySelector('button[value="draft"]'));
@@ -15,7 +17,7 @@ document.addEventListener("keydown", ev => {
 });
 document.addEventListener("submit", async ev => {
   const form = ev.target;
-  if (!form.matches(".writing-form")) return;
+  if (!form.matches(".writing-form") || form.matches(".project-form")) return;
   ev.preventDefault();
   if (form.getAttribute("aria-busy") === "true") return;
   const intent = ev.submitter?.value || "draft";
@@ -29,7 +31,7 @@ document.addEventListener("submit", async ev => {
     status.setAttribute("role", "status");
     form.querySelector(".editor-actions").after(status);
   }
-  status.textContent = "正在提交…";
+  status.textContent = intent === "delete" ? "正在删除…" : "正在提交…";
   try {
     const response = await fetch(form.action, {
       method: "POST",
@@ -59,10 +61,36 @@ document.addEventListener("submit", async ev => {
       window.scrollTo({ top: 0, behavior: "instant" });
       return;
     }
-    status.textContent = response.status === 403 ? "保存未完成，请确认已用站主账号登录。正文仍在编辑器中。" : "保存未完成。正文仍在编辑器中，可以再次提交。";
+    status.textContent = response.status === 403 ? "操作未完成，请确认已用站主账号登录。正文仍在编辑器中。" : "操作未完成。正文仍在编辑器中，可以再次提交。";
   } catch {
     status.textContent = "连接中断，正文仍在编辑器中。网络恢复后可以再次提交。";
   } finally {
     form.removeAttribute("aria-busy");
   }
 });
+
+const projectForm = document.querySelector('.project-form[data-autofill="1"]');
+const repoSelect = projectForm?.querySelector("#repo-select");
+if (repoSelect) {
+  const repoIdInput = projectForm.querySelector("#repo-id");
+  const nameInput = projectForm.querySelector("#project-name");
+  const techInput = projectForm.querySelector("#project-tech");
+  const detailInput = projectForm.querySelector("#project-detail");
+  let lastAuto = {
+    name: nameInput.value,
+    tech: techInput.value,
+    detail: detailInput.value
+  };
+  repoSelect.addEventListener("change", () => {
+    const opt = repoSelect.selectedOptions[0];
+    if (!opt) return;
+    if (repoIdInput) repoIdInput.value = opt.dataset.repoId || "";
+    const nextName = opt.value || "";
+    const nextTech = opt.dataset.lang || "";
+    const nextDetail = opt.dataset.desc || "";
+    if (!nameInput.value.trim() || nameInput.value === lastAuto.name) nameInput.value = nextName;
+    if (!techInput.value.trim() || techInput.value === lastAuto.tech) techInput.value = nextTech;
+    if (!detailInput.value.trim() || detailInput.value === lastAuto.detail) detailInput.value = nextDetail;
+    lastAuto = { name: nextName, tech: nextTech, detail: nextDetail };
+  });
+}

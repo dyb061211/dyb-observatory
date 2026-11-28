@@ -1,8 +1,12 @@
 import { emptyPage, refreshPage } from "./github-api.js";
-import { repositorySection } from "./github-catalog.js?v=12";
+import { repositorySection } from "./github-catalog.js?v=13";
 
 const section = document.getElementById("repositories");
 const page = Number(section.dataset.page);
+let featuredRepos = [];
+try { featuredRepos = JSON.parse(section.dataset.featured || "[]"); } catch {}
+const canEdit = section.dataset.canEdit === "true";
+const catalogOptions = { featuredRepos, canEdit };
 const storageKey = "dyb-public-github-v1/" + page;
 const endpoint = new URL("/projects", location.origin);
 endpoint.search = new URLSearchParams({ view: "repositories", page: section.dataset.page });
@@ -45,7 +49,7 @@ async function resolveSection(server) {
   let saved = latestDevicePage();
   if (server.dataset.stale !== "true") {
     return !saved.stale && saved.nextCheckAt > Date.now() && saved.syncedAt > Number(server.dataset.syncedAt)
-      ? parseSection(repositorySection(saved)) : server;
+      ? parseSection(repositorySection(saved, catalogOptions)) : server;
   }
   // The public API also supports anonymous CORS reads from a visitor's browser.
   if (saved.nextCheckAt <= Date.now()) {
@@ -53,7 +57,7 @@ async function resolveSection(server) {
     try { localStorage.setItem(storageKey, JSON.stringify(saved)); } catch {}
   }
   if (saved.syncedAt && (!saved.stale || saved.syncedAt >= Number(server.dataset.syncedAt))) {
-    return parseSection(repositorySection(saved));
+    return parseSection(repositorySection(saved, catalogOptions));
   }
   const delay = Math.min(Number(server.dataset.refreshIn), saved.nextCheckAt - Date.now());
   server.dataset.refreshIn = String(Math.max(1000, delay));
